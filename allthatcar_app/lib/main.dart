@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'core/config/app_config.dart';
 import 'core/config/supabase_config.dart';
 import 'core/constants/app_constants.dart';
+import 'core/widgets/custom_loading_indicator.dart';
+import 'core/widgets/loading_test_screen.dart';
+import 'features/auth/presentation/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,27 +41,57 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      // home: const SplashScreen(), // 스플래시 화면
+      home: const LoginScreen(), // 로그인 화면 테스트
+      // home: const LoadingTestScreen(), // 로딩 테스트 화면
     );
   }
 }
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _simulateLoading();
+  }
+
+  Future<void> _simulateLoading() async {
+    // 로딩 애니메이션을 보여주기 위한 지연 (3초)
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isConnected = SupabaseConfig.isConfigured;
+    if (_isLoading) {
+      return const Scaffold(
+        body: CustomLoadingIndicator(),
+      );
+    }
 
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.directions_car,
-              size: 100,
-              color: Theme.of(context).colorScheme.primary,
+            SvgPicture.asset(
+              'assets/images/logo.svg',
+              width: 150,
+              height: 150,
             ),
             const SizedBox(height: 24),
             Text(
@@ -74,22 +108,28 @@ class SplashScreen extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 48),
-            if (isConnected) ...[
-              const Icon(Icons.check_circle, color: Colors.green, size: 48),
-              const SizedBox(height: 16),
-              const Text(
-                '✅ Supabase 연결됨',
-                style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+            Icon(
+              SupabaseConfig.isConfigured
+                  ? Icons.check_circle
+                  : Icons.error,
+              color: SupabaseConfig.isConfigured
+                  ? Colors.green
+                  : Colors.red,
+              size: 48,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              SupabaseConfig.isConfigured
+                  ? '✅ Supabase 연결됨'
+                  : '❌ Supabase 연결 실패',
+              style: TextStyle(
+                color: SupabaseConfig.isConfigured
+                    ? Colors.green
+                    : Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
-            ] else ...[
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              const Text('연결 중...'),
-            ],
+            ),
           ],
         ),
       ),
