@@ -181,13 +181,13 @@ class _MonthlyCard extends StatelessWidget {
                 count: monthData.internalCount,
                 color: const Color(0xFF2196F3),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               _CompactDepartmentItem(
                 label: '외부',
                 count: monthData.externalCount,
                 color: const Color(0xFF4CAF50),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               _CompactDepartmentItem(
                 label: '내외부',
                 count: monthData.bothCount,
@@ -208,12 +208,14 @@ class _MonthlyCard extends StatelessWidget {
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: const Color(0xFF2196F3),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: const Text(
                   '상세보기',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
