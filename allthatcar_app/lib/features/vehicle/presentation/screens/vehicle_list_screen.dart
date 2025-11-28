@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'vehicle_detail_screen.dart';
+import 'monthly_status_screen.dart';
 
 /// 차량 정보 모델
 class Vehicle {
@@ -45,57 +46,50 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     _vehicles = _getMockVehicles();
   }
 
-  // 임시 차량 데이터
+  // 임시 차량 데이터 (9월~11월)
   List<Vehicle> _getMockVehicles() {
     return [
-      Vehicle(
-        id: '1',
-        plateNumber: '10가1234',
-        model: '그랜저',
-        department: '내부',
-        date: '7/1',
-        isCompleted: true,
-      ),
-      Vehicle(
-        id: '2',
-        plateNumber: '11가1234',
-        model: 'GV80',
-        department: '내외부',
-        date: '7/1',
-        isCompleted: false,
-      ),
-      Vehicle(
-        id: '3',
-        plateNumber: '10가4321',
-        model: '그랜저',
-        department: '외부',
-        date: '7/1',
-        isCompleted: true,
-      ),
-      Vehicle(
-        id: '4',
-        plateNumber: '10가6234',
-        model: 'GV80',
-        department: '내부',
-        date: '7/1',
-        isCompleted: false,
-      ),
-      Vehicle(
-        id: '5',
-        plateNumber: '10나1234',
-        model: '그랜저',
-        department: '외부',
-        date: '7/1',
-        isCompleted: false,
-      ),
-      Vehicle(
-        id: '6',
-        plateNumber: '10가1111',
-        model: 'GV80',
-        department: '내부',
-        date: '7/1',
-        isCompleted: true,
-      ),
+      // 9월 데이터
+      Vehicle(id: '1', plateNumber: '10가1234', model: '그랜저', department: '내부', date: '9/1', isCompleted: true),
+      Vehicle(id: '2', plateNumber: '11가1234', model: 'GV80', department: '내외부', date: '9/3', isCompleted: true),
+      Vehicle(id: '3', plateNumber: '10가4321', model: '쏘나타', department: '외부', date: '9/5', isCompleted: true),
+      Vehicle(id: '4', plateNumber: '10가6234', model: 'GV80', department: '내부', date: '9/7', isCompleted: true),
+      Vehicle(id: '5', plateNumber: '10나1234', model: '그랜저', department: '외부', date: '9/10', isCompleted: true),
+      Vehicle(id: '6', plateNumber: '10가1111', model: '쏘나타', department: '내부', date: '9/12', isCompleted: false),
+      Vehicle(id: '7', plateNumber: '12가5678', model: 'GV70', department: '내외부', date: '9/15', isCompleted: true),
+      Vehicle(id: '8', plateNumber: '13가9012', model: '그랜저', department: '외부', date: '9/18', isCompleted: true),
+      Vehicle(id: '9', plateNumber: '14가3456', model: 'GV80', department: '내부', date: '9/20', isCompleted: false),
+      Vehicle(id: '10', plateNumber: '15가7890', model: '쏘나타', department: '내외부', date: '9/22', isCompleted: true),
+      Vehicle(id: '11', plateNumber: '16가1122', model: 'GV70', department: '외부', date: '9/25', isCompleted: true),
+      Vehicle(id: '12', plateNumber: '17가3344', model: '그랜저', department: '내부', date: '9/28', isCompleted: false),
+
+      // 10월 데이터
+      Vehicle(id: '13', plateNumber: '18가5566', model: 'GV80', department: '내외부', date: '10/2', isCompleted: true),
+      Vehicle(id: '14', plateNumber: '19가7788', model: '쏘나타', department: '외부', date: '10/5', isCompleted: true),
+      Vehicle(id: '15', plateNumber: '20가9900', model: 'GV70', department: '내부', date: '10/8', isCompleted: false),
+      Vehicle(id: '16', plateNumber: '21가1357', model: '그랜저', department: '내외부', date: '10/10', isCompleted: true),
+      Vehicle(id: '17', plateNumber: '22가2468', model: 'GV80', department: '외부', date: '10/12', isCompleted: true),
+      Vehicle(id: '18', plateNumber: '23가3579', model: '쏘나타', department: '내부', date: '10/15', isCompleted: true),
+      Vehicle(id: '19', plateNumber: '24가4680', model: 'GV70', department: '내외부', date: '10/18', isCompleted: false),
+      Vehicle(id: '20', plateNumber: '25가5791', model: '그랜저', department: '외부', date: '10/20', isCompleted: true),
+      Vehicle(id: '21', plateNumber: '26가6802', model: 'GV80', department: '내부', date: '10/22', isCompleted: true),
+      Vehicle(id: '22', plateNumber: '27가7913', model: '쏘나타', department: '내외부', date: '10/25', isCompleted: false),
+      Vehicle(id: '23', plateNumber: '28가8024', model: 'GV70', department: '외부', date: '10/28', isCompleted: true),
+      Vehicle(id: '24', plateNumber: '29가9135', model: '그랜저', department: '내부', date: '10/30', isCompleted: true),
+
+      // 11월 데이터
+      Vehicle(id: '25', plateNumber: '30가1246', model: 'GV80', department: '내외부', date: '11/1', isCompleted: true),
+      Vehicle(id: '26', plateNumber: '31가2357', model: '쏘나타', department: '외부', date: '11/3', isCompleted: false),
+      Vehicle(id: '27', plateNumber: '32가3468', model: 'GV70', department: '내부', date: '11/5', isCompleted: true),
+      Vehicle(id: '28', plateNumber: '33가4579', model: '그랜저', department: '내외부', date: '11/8', isCompleted: true),
+      Vehicle(id: '29', plateNumber: '34가5680', model: 'GV80', department: '외부', date: '11/10', isCompleted: false),
+      Vehicle(id: '30', plateNumber: '35가6791', model: '쏘나타', department: '내부', date: '11/12', isCompleted: true),
+      Vehicle(id: '31', plateNumber: '36가7802', model: 'GV70', department: '내외부', date: '11/15', isCompleted: true),
+      Vehicle(id: '32', plateNumber: '37가8913', model: '그랜저', department: '외부', date: '11/18', isCompleted: false),
+      Vehicle(id: '33', plateNumber: '38가9024', model: 'GV80', department: '내부', date: '11/20', isCompleted: true),
+      Vehicle(id: '34', plateNumber: '39가0135', model: '쏘나타', department: '내외부', date: '11/22', isCompleted: true),
+      Vehicle(id: '35', plateNumber: '40가1246', model: 'GV70', department: '외부', date: '11/25', isCompleted: false),
+      Vehicle(id: '36', plateNumber: '41가2357', model: '그랜저', department: '내부', date: '11/28', isCompleted: true),
     ];
   }
 
@@ -110,6 +104,46 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
       default:
         return Colors.grey;
     }
+  }
+
+  // 월별 통계 데이터 계산
+  List<MonthlyData> _calculateMonthlyStats() {
+    final vehicles = _getMockVehicles();
+    final Map<int, List<Vehicle>> vehiclesByMonth = {};
+
+    // 월별로 차량 그룹화
+    for (var vehicle in vehicles) {
+      final month = int.parse(vehicle.date.split('/')[0]);
+      vehiclesByMonth.putIfAbsent(month, () => []).add(vehicle);
+    }
+
+    // 월별 통계 생성
+    return vehiclesByMonth.entries.map((entry) {
+      final month = entry.key;
+      final monthVehicles = entry.value;
+
+      return MonthlyData(
+        month: month,
+        totalCount: monthVehicles.length,
+        completedCount: monthVehicles.where((v) => v.isCompleted).length,
+        internalCount: monthVehicles.where((v) => v.department == '내부').length,
+        externalCount: monthVehicles.where((v) => v.department == '외부').length,
+        bothCount: monthVehicles.where((v) => v.department == '내외부').length,
+      );
+    }).toList()..sort((a, b) => a.month.compareTo(b.month));
+  }
+
+  // 월별 현황 화면으로 이동
+  void _navigateToMonthlyStatus() {
+    final monthlyStats = _calculateMonthlyStats();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MonthlyStatusScreen(
+          siteName: widget.siteName,
+          monthlyDataList: monthlyStats,
+        ),
+      ),
+    );
   }
 
   // 월 드롭다운 메뉴 표시
@@ -802,22 +836,14 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
             ),
           ),
 
-          // 달력 보기 버튼
+          // 전체 현황 버튼
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
             child: SizedBox(
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: 달력 화면으로 이동
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('달력 보기'),
-                      duration: Duration(seconds: 1),
-                    ),
-                  );
-                },
+                onPressed: _navigateToMonthlyStatus,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2196F3),
                   foregroundColor: Colors.white,
@@ -827,7 +853,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                   ),
                 ),
                 child: const Text(
-                  '달력 보기',
+                  '전체 현황',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
