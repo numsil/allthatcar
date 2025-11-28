@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'month_detail_screen.dart';
 
 /// 월별 작업 현황 화면
 class MonthlyStatusScreen extends StatelessWidget {
@@ -60,8 +61,8 @@ class MonthlyStatusScreen extends StatelessWidget {
             child: Text(
               '월별 작업 현황',
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
             ),
@@ -73,7 +74,10 @@ class MonthlyStatusScreen extends StatelessWidget {
               itemCount: monthlyDataList.length,
               itemBuilder: (context, index) {
                 final monthData = monthlyDataList[index];
-                return _MonthlyCard(monthData: monthData);
+                return _MonthlyCard(
+                  monthData: monthData,
+                  siteName: siteName,
+                );
               },
             ),
           ),
@@ -85,8 +89,12 @@ class MonthlyStatusScreen extends StatelessWidget {
 
 class _MonthlyCard extends StatelessWidget {
   final MonthlyData monthData;
+  final String siteName;
 
-  const _MonthlyCard({required this.monthData});
+  const _MonthlyCard({
+    required this.monthData,
+    required this.siteName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -95,15 +103,15 @@ class _MonthlyCard extends StatelessWidget {
         : '0.0';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -115,92 +123,99 @@ class _MonthlyCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 월 정보
+          // 월 정보 & 완료율
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '${monthData.month}월',
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
+              Text(
+                '완료율 $completionRate%',
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF2196F3),
                 ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2196F3).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // 통계 정보 (가로 배치)
+          Row(
+            children: [
+              _CompactStatItem(
+                label: '전체',
+                value: monthData.totalCount.toString(),
+                color: Colors.grey[700]!,
+              ),
+              const SizedBox(width: 16),
+              _CompactStatItem(
+                label: '완료',
+                value: monthData.completedCount.toString(),
+                color: const Color(0xFF4CAF50),
+              ),
+              const SizedBox(width: 16),
+              _CompactStatItem(
+                label: '진행중',
+                value: (monthData.totalCount - monthData.completedCount).toString(),
+                color: const Color(0xFFFF9800),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // 작업 항목별 통계 (가로 배치)
+          Row(
+            children: [
+              _CompactDepartmentItem(
+                label: '내부',
+                count: monthData.internalCount,
+                color: const Color(0xFF2196F3),
+              ),
+              const SizedBox(width: 8),
+              _CompactDepartmentItem(
+                label: '외부',
+                count: monthData.externalCount,
+                color: const Color(0xFF4CAF50),
+              ),
+              const SizedBox(width: 8),
+              _CompactDepartmentItem(
+                label: '내외부',
+                count: monthData.bothCount,
+                color: const Color(0xFFF44336),
+              ),
+              const Spacer(),
+              // 상세보기 버튼
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => MonthDetailScreen(
+                        siteName: siteName,
+                        month: monthData.month,
+                      ),
+                    ),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF2196F3),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 ),
-                child: Text(
-                  '완료율 $completionRate%',
-                  style: const TextStyle(
+                child: const Text(
+                  '상세보기',
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF2196F3),
                   ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16),
-
-          // 통계 정보
-          Row(
-            children: [
-              Expanded(
-                child: _StatItem(
-                  label: '전체',
-                  value: monthData.totalCount.toString(),
-                  color: Colors.grey[700]!,
-                ),
-              ),
-              Expanded(
-                child: _StatItem(
-                  label: '완료',
-                  value: monthData.completedCount.toString(),
-                  color: const Color(0xFF4CAF50),
-                ),
-              ),
-              Expanded(
-                child: _StatItem(
-                  label: '진행중',
-                  value: (monthData.totalCount - monthData.completedCount).toString(),
-                  color: const Color(0xFFFF9800),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16),
-
-          // 작업 항목별 통계
-          Row(
-            children: [
-              Expanded(
-                child: _DepartmentItem(
-                  label: '내부',
-                  count: monthData.internalCount,
-                  color: const Color(0xFF2196F3),
-                ),
-              ),
-              Expanded(
-                child: _DepartmentItem(
-                  label: '외부',
-                  count: monthData.externalCount,
-                  color: const Color(0xFFF44336),
-                ),
-              ),
-              Expanded(
-                child: _DepartmentItem(
-                  label: '내외부',
-                  count: monthData.bothCount,
-                  color: const Color(0xFFE91E63),
                 ),
               ),
             ],
@@ -211,12 +226,12 @@ class _MonthlyCard extends StatelessWidget {
   }
 }
 
-class _StatItem extends StatelessWidget {
+class _CompactStatItem extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
 
-  const _StatItem({
+  const _CompactStatItem({
     required this.label,
     required this.value,
     required this.color,
@@ -224,17 +239,9 @@ class _StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
-        ),
-        const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
@@ -243,17 +250,26 @@ class _StatItem extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
+        const SizedBox(width: 6),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
       ],
     );
   }
 }
 
-class _DepartmentItem extends StatelessWidget {
+class _CompactDepartmentItem extends StatelessWidget {
   final String label;
   final int count;
   final Color color;
 
-  const _DepartmentItem({
+  const _CompactDepartmentItem({
     required this.label,
     required this.count,
     required this.color,
@@ -262,29 +278,29 @@ class _DepartmentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            count.toString(),
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 12,
               color: color,
               fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            count.toString(),
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: color,
             ),
           ),
         ],

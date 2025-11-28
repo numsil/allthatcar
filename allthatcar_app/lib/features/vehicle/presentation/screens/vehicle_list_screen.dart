@@ -24,10 +24,12 @@ class Vehicle {
 
 class VehicleListScreen extends StatefulWidget {
   final String siteName;
+  final int? initialMonth;
 
   const VehicleListScreen({
     super.key,
     required this.siteName,
+    this.initialMonth,
   });
 
   @override
@@ -36,13 +38,14 @@ class VehicleListScreen extends StatefulWidget {
 
 class _VehicleListScreenState extends State<VehicleListScreen> {
   int _selectedYear = 2025;
-  int _selectedMonth = 7;
+  late int _selectedMonth;
   int _selectedWeek = 1;
   List<Vehicle> _vehicles = [];
 
   @override
   void initState() {
     super.initState();
+    _selectedMonth = widget.initialMonth ?? 11; // 전달받은 월 또는 현재 월(11월)
     _vehicles = _getMockVehicles();
   }
 
@@ -100,7 +103,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
       case '외부':
         return const Color(0xFF4CAF50); // 녹색
       case '내외부':
-        return const Color(0xFFE91E63); // 분홍색
+        return const Color(0xFFF44336); // 빨간색
       default:
         return Colors.grey;
     }
@@ -179,32 +182,88 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     );
   }
 
-  // 월 드롭다운 메뉴 표시
+  // 월 드롭다운 메뉴 표시 (2줄 그리드: 1열 1~6월, 2열 7~12월)
   void _showMonthMenu(BuildContext context, Offset position) {
-    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-
     showMenu<int>(
       context: context,
+      color: Colors.white,
       position: RelativeRect.fromLTRB(
-        position.dx - 40,
-        position.dy + 10,
-        overlay.size.width - position.dx - 40,
-        overlay.size.height - position.dy - 10,
+        position.dx,
+        position.dy + 30,
+        position.dx + 300,
+        position.dy + 200,
       ),
-      constraints: const BoxConstraints(
-        maxHeight: 300,
-        minWidth: 100,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      items: List.generate(12, (index) => index + 1)
-          .map((month) => PopupMenuItem<int>(
-                value: month,
-                height: 40,
-                child: Text(
-                  '${month}월',
-                  style: const TextStyle(fontSize: 14),
+      items: [
+        // 1열: 1~6월
+        PopupMenuItem<int>(
+          enabled: false,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(6, (index) {
+              final month = index + 1;
+              final isSelected = month == _selectedMonth;
+              return Expanded(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop(month);
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Center(
+                      child: Text(
+                        '${month}월',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                          color: isSelected ? Colors.black : Colors.grey[500],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ))
-          .toList(),
+              );
+            }),
+          ),
+        ),
+        // 2열: 7~12월
+        PopupMenuItem<int>(
+          enabled: false,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(6, (index) {
+              final month = index + 7;
+              final isSelected = month == _selectedMonth;
+              return Expanded(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop(month);
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Center(
+                      child: Text(
+                        '${month}월',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                          color: isSelected ? Colors.black : Colors.grey[500],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
     ).then((selectedMonth) {
       if (selectedMonth != null) {
         setState(() {
@@ -218,17 +277,31 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
   void _showWeekMenu(BuildContext context, Offset position) {
     showMenu<int>(
       context: context,
+      color: Colors.white,
       position: RelativeRect.fromLTRB(
         position.dx,
         position.dy + 30,
         position.dx + 200,
         position.dy + 300,
       ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       items: List.generate(4, (index) => index + 1)
-          .map((week) => PopupMenuItem<int>(
-                value: week,
-                child: Text('${week}주차'),
-              ))
+          .map((week) {
+            final isSelected = week == _selectedWeek;
+            return PopupMenuItem<int>(
+              value: week,
+              child: Text(
+                '${week}주차',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                  color: isSelected ? Colors.black : Colors.grey[500],
+                ),
+              ),
+            );
+          })
           .toList(),
     ).then((selectedWeek) {
       if (selectedWeek != null) {
@@ -939,12 +1012,12 @@ class _VehicleCard extends StatelessWidget {
       },
       onLongPress: onLongPress,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
         child: Row(
           children: [
             // 날짜
             SizedBox(
-              width: 35,
+              width: 50,
               child: Text(
                 vehicle.date,
                 style: const TextStyle(
@@ -954,7 +1027,7 @@ class _VehicleCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
 
             // 차량 정보 (좌측)
             Expanded(

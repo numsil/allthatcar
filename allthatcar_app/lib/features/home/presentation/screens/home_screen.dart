@@ -95,8 +95,8 @@ class HomeScreen extends StatelessWidget {
             child: Text(
               '현장 선택',
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
             ),
