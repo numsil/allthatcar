@@ -106,6 +106,39 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     }
   }
 
+  // 선택된 월과 주차에 맞는 차량만 필터링
+  List<Vehicle> _getFilteredVehicles() {
+    return _vehicles.where((vehicle) {
+      // 날짜가 '-'인 경우는 항상 표시
+      if (vehicle.date == '-') return true;
+
+      // 월 필터링
+      final parts = vehicle.date.split('/');
+      if (parts.isEmpty) return false;
+
+      final vehicleMonth = int.tryParse(parts[0]);
+      if (vehicleMonth == null || vehicleMonth != _selectedMonth) {
+        return false;
+      }
+
+      // 주차 필터링 (간단한 날짜 기반)
+      if (parts.length > 1) {
+        final day = int.tryParse(parts[1]);
+        if (day != null) {
+          // 1주차: 1-7일, 2주차: 8-14일, 3주차: 15-21일, 4주차: 22일 이상
+          final weekStart = (_selectedWeek - 1) * 7 + 1;
+          final weekEnd = _selectedWeek * 7;
+
+          if (day < weekStart || day > weekEnd) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }).toList();
+  }
+
   // 월별 통계 데이터 계산
   List<MonthlyData> _calculateMonthlyStats() {
     final vehicles = _getMockVehicles();
@@ -815,22 +848,29 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
 
           // 차량 목록
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: _vehicles.length,
-              separatorBuilder: (context, index) => Divider(
-                height: 1,
-                thickness: 1,
-                color: Colors.grey[200],
-              ),
-              itemBuilder: (context, index) {
-                final vehicle = _vehicles[index];
-                return _VehicleCard(
-                  vehicle: vehicle,
-                  departmentColor: _getDepartmentColor(vehicle.department),
-                  siteName: widget.siteName,
-                  index: index,
-                  onLongPress: () => _showDeleteConfirmDialog(vehicle, index),
+            child: Builder(
+              builder: (context) {
+                final filteredVehicles = _getFilteredVehicles();
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  itemCount: filteredVehicles.length,
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Colors.grey[200],
+                  ),
+                  itemBuilder: (context, index) {
+                    final vehicle = filteredVehicles[index];
+                    // 원본 리스트에서의 인덱스 찾기
+                    final originalIndex = _vehicles.indexOf(vehicle);
+                    return _VehicleCard(
+                      vehicle: vehicle,
+                      departmentColor: _getDepartmentColor(vehicle.department),
+                      siteName: widget.siteName,
+                      index: originalIndex,
+                      onLongPress: () => _showDeleteConfirmDialog(vehicle, originalIndex),
+                    );
+                  },
                 );
               },
             ),
